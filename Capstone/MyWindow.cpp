@@ -1,6 +1,8 @@
+#define GLEW_STATIC
 #ifndef MYWINDOW_H
 #include "MyWindow.h"
 #endif
+#include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
 MyWindow::MyWindow(std::string title, int width, int height) :
@@ -37,6 +39,11 @@ int MyWindow::getWindowHeight()
 	return windowHeight;
 }
 
+GLFWwindow * MyWindow::getWindow()
+{
+	return window;
+}
+
 std::string MyWindow::getWindowTitle()
 {
 	return windowTitle;
@@ -57,13 +64,33 @@ void MyWindow::initWindow()
 	{
 		// TODO: Add logging
 		// HACK: EXIT USED
-		exit;
+		exit(0);
 	}
-
 	glfwMakeContextCurrent(window);
+	initGlew();
+	glViewport(0, 0, windowWidth, windowHeight);
 }
 
 void MyWindow::setSize()
 {
 	glfwSetWindowSize(window, windowWidth, windowHeight);
+}
+
+void MyWindow::initGlew()
+{
+	glewExperimental = GL_TRUE;
+	if (glewInit() != GLEW_OK)
+	{
+		// TODO: Add logging
+		// HACK: EXIT USED
+		exit(0);
+	}
+}
+
+void MyWindow::keyCallback(GLFWwindow* window, int key, int scancode, int action, int modifiers)
+{
+	if (key == GLFW_KEY_ESCAPE)
+	{
+
+	}
 }
