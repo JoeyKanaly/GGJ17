@@ -1,0 +1,3 @@
+For my capstone project I will be creating a simple 2D part game, called High-Speed Jousting Fights. This game will be created with OpenGL and C++, to allow for multiplatform support. I plan on making this game originally only local multiplayer with only up to two player support to allow for testing/simplicity.
+
+This game will allow two players to play in a simple 2D world where the objective of the game is to defeat the other player by attacking with your lance. The first person to hit the other player three times with their lance wins.

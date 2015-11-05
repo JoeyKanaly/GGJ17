@@ -5,11 +5,23 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-MyWindow::MyWindow(std::string title, int width, int height) :
-	windowTitle(title), windowWidth(width), windowHeight(height)
+MyWindow* MyWindow::m_pInstance = NULL;
+
+MyWindow::MyWindow() :
+	windowTitle(""), windowWidth(800), windowHeight(600)
 {
 	glfwInit();
 	initWindow();
+}
+
+MyWindow * MyWindow::Instance()
+{
+	if (m_pInstance == nullptr)
+	{
+		m_pInstance = new MyWindow();
+	}
+
+	return m_pInstance;
 }
 
 void MyWindow::setWindowWidth(int w)
@@ -27,6 +39,7 @@ void MyWindow::setWindowHeight(int h)
 void MyWindow::setWindowTitle(std::string t)
 {
 	windowTitle = t;
+	glfwSetWindowTitle(window, windowTitle.c_str());
 }
 
 int MyWindow::getWindowWidth()
@@ -47,6 +60,11 @@ GLFWwindow * MyWindow::getWindow()
 std::string MyWindow::getWindowTitle()
 {
 	return windowTitle;
+}
+
+void MyWindow::addKeyCallbackFunction(std::function<void(int, int, int, int)> func)
+{
+	keyCalls.push_back(func);
 }
 
 void MyWindow::initWindow()
@@ -89,8 +107,18 @@ void MyWindow::initGlew()
 
 void MyWindow::keyCallback(GLFWwindow* window, int key, int scancode, int action, int modifiers)
 {
+	Instance()->keyCallbackImpl(key, scancode, action, modifiers);
+}
+
+void MyWindow::keyCallbackImpl(int key, int scanCode, int action, int modifiers)
+{
 	if (key == GLFW_KEY_ESCAPE)
 	{
+		glfwSetWindowShouldClose(window, 1);
+	}
+	for (int i = 0; i < keyCalls.size(); i++)
+	{
 
+		keyCalls.at(i)(key, scanCode, action, modifiers);
 	}
 }

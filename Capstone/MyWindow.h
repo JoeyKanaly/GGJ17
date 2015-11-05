@@ -2,14 +2,15 @@
 #define MYWINDOW_H
 
 #include <iostream>
-#include <map>
+#include <vector>
+#include <functional>
 
 struct GLFWwindow {};
 
 class MyWindow
 {
 public:
-	MyWindow(std::string title, int width = 800, int height = 600);
+	static MyWindow* Instance();
 	void setWindowWidth(int w);
 	void setWindowHeight(int h);
 	void setWindowTitle(std::string t);
@@ -17,17 +18,21 @@ public:
 	int getWindowHeight();
 	GLFWwindow* getWindow();
 	std::string getWindowTitle();
+	void addKeyCallbackFunction(std::function<void(int, int, int, int)> func);
+	static void keyCallback(GLFWwindow * window, int key, int scancode, int action, int modifiers);
 private:
+	MyWindow();
+	MyWindow(MyWindow const&) {};
+	MyWindow operator=(const MyWindow& a) {};
+	static MyWindow* m_pInstance;
 	void initWindow();
 	void setSize();
 	void initGlew();
-	void keyCallback(GLFWwindow * window, int key, int scancode, int action, int modifiers);
+	void keyCallbackImpl(int key, int scanCode, int action, int modifiers);
 	GLFWwindow* window;
 	int windowWidth, windowHeight;
 	std::string windowTitle;
-
-	// HACK: USING MAP WITH VOID POINTERS
-	std::map<std::string, void*> stuff;
+	std::vector<std::function<void(int, int, int, int)>> keyCalls;
 };
 
 #endif
