@@ -2,8 +2,10 @@
 #ifndef MYWINDOW_H
 #include "MyWindow.h"
 #endif
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
+
+#define GLEW_STATIC
+#include <GL\glew.h>
+#include <GLFW\glfw3.h>
 
 MyWindow* MyWindow::m_pInstance = NULL;
 
@@ -80,13 +82,16 @@ void MyWindow::initWindow()
 	
 	if (window == nullptr)
 	{
-		// TODO: Add logging
+		Log::instance()->writeToLog("Window was unable to initialize.");
 		// HACK: EXIT USED
 		exit(0);
 	}
+	glViewport(0, 0, windowWidth, windowHeight);
 	glfwMakeContextCurrent(window);
 	initGlew();
-	glViewport(0, 0, windowWidth, windowHeight);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 }
 
 void MyWindow::setSize()
@@ -99,7 +104,7 @@ void MyWindow::initGlew()
 	glewExperimental = GL_TRUE;
 	if (glewInit() != GLEW_OK)
 	{
-		// TODO: Add logging
+		Log::instance()->writeToLog("GLEW was unable to initialize.");
 		// HACK: EXIT USED
 		exit(0);
 	}
@@ -118,7 +123,6 @@ void MyWindow::keyCallbackImpl(int key, int scanCode, int action, int modifiers)
 	}
 	for (int i = 0; i < keyCalls.size(); i++)
 	{
-
 		keyCalls.at(i)(key, scanCode, action, modifiers);
 	}
 }

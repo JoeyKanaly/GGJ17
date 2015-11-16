@@ -2,12 +2,36 @@
 #include "Player.h"
 #endif
 
-#include <iostream>
+#define GLEW_STATIC
+#include <GL\glew.h>
+#include <GLFW\glfw3.h>
 
-Player::Player() :
-	playerSprite()
+Player::Player()
 {
+	// HACK: TEMP FUNCTION CALL HERE
+	setVertexData();
+}
 
+void Player::setVertexData()
+{
+	glm::vec4 v(0.0f, 1.0f, 0.0f, 1.0f);
+	data.push_back(v);
+
+	v = glm::vec4(1.0f, 0.0f, 1.0f, 0.0f);
+	data.push_back(v);
+
+	v = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
+	data.push_back(v);
+
+	v = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
+	data.push_back(v);
+
+	v = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	data.push_back(v);
+	
+	v = glm::vec4(1.0f, 0.0f, 1.0f, 0.0f);
+	data.push_back(v);
+	initBuffers();
 }
 
 void Player::keyCallback(int key, int scancode, int action, int modifiers)
@@ -20,4 +44,6 @@ void Player::keyCallback(int key, int scancode, int action, int modifiers)
 
 void Player::draw()
 {
+	playerHealth.draw();
+	Drawable::draw();
 }
