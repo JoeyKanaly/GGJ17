@@ -10,8 +10,9 @@
 MyWindow* MyWindow::m_pInstance = NULL;
 
 MyWindow::MyWindow() :
-	windowTitle(""), windowWidth(800), windowHeight(600)
+	windowTitle(""), windowWidth(800), windowHeight(600), resized(false)
 {
+	// TODO: ERROR HANDLING
 	glfwInit();
 	initWindow();
 }
@@ -24,6 +25,13 @@ MyWindow * MyWindow::Instance()
 	}
 
 	return m_pInstance;
+}
+
+void MyWindow::setWindowSize(int w, int h)
+{
+	windowWidth = w;
+	windowHeight = h;
+	setSize();
 }
 
 void MyWindow::setWindowWidth(int w)
@@ -75,8 +83,7 @@ void MyWindow::initWindow()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-	// TODO: Handle Resizing
-	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+	projection = glm::ortho(0.0f, (float)windowWidth, (float)windowHeight, 0.0f);
 
 	window = glfwCreateWindow(windowWidth, windowHeight, windowTitle.c_str(), nullptr, nullptr);
 	
@@ -91,12 +98,17 @@ void MyWindow::initWindow()
 	initGlew();
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
+	glfwSetKeyCallback(window, MyWindow::keyCallback);
+	glfwSetWindowSizeCallback(window, MyWindow::resizeCallback);
+	generateUBO();
 }
 
 void MyWindow::setSize()
 {
+	projection = glm::ortho(0.0f, (float)windowWidth, (float)windowHeight, 0.0f);
+	updateUBO();
 	glfwSetWindowSize(window, windowWidth, windowHeight);
+	glViewport(0, 0, windowWidth, windowHeight);
 }
 
 void MyWindow::initGlew()
@@ -115,6 +127,11 @@ void MyWindow::keyCallback(GLFWwindow* window, int key, int scancode, int action
 	Instance()->keyCallbackImpl(key, scancode, action, modifiers);
 }
 
+void MyWindow::resizeCallback(GLFWwindow* window, int width, int height)
+{
+	Instance()->resizeCallbackImpl(width, height);
+}
+
 void MyWindow::keyCallbackImpl(int key, int scanCode, int action, int modifiers)
 {
 	if (key == GLFW_KEY_ESCAPE)
@@ -123,6 +140,30 @@ void MyWindow::keyCallbackImpl(int key, int scanCode, int action, int modifiers)
 	}
 	for (int i = 0; i < keyCalls.size(); i++)
 	{
-		keyCalls.at(i)(key, scanCode, action, modifiers);
+		keyCalls[i](key, scanCode, action, modifiers);
 	}
+}
+
+void MyWindow::resizeCallbackImpl(int width, int height)
+{
+	windowWidth = width;
+	windowHeight = height;
+	setSize();
+	resized = true;
+}
+
+void MyWindow::generateUBO()
+{
+	glGenBuffers(1, &UBO);
+	glBindBuffer(GL_UNIFORM_BUFFER, UBO);
+	glBufferData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), glm::value_ptr(projection), GL_DYNAMIC_DRAW);
+	glBindBufferBase(GL_UNIFORM_BUFFER, 0, UBO);
+	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+}
+
+void MyWindow::updateUBO()
+{
+	glBindBuffer(GL_UNIFORM_BUFFER, UBO);
+	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(projection));
+	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }

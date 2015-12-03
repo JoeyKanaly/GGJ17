@@ -56,7 +56,7 @@ void Health::draw()
 		tempYOffset += getSize().x;
 	}
 
-	setSpritePath("./sprite/doesntexit.png");
+	setSpritePath("./sprites/heart-empty.png");
 	for (int i = 0; i < maxHealth - currentHealth; i++)
 	{
 		setPosition(tempYOffset, 0);

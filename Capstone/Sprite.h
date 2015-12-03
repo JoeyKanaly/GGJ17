@@ -12,6 +12,7 @@ struct Texture
 {
 	GLuint textureID;
 	std::string path;
+	glm::vec2 size;
 };
 
 class Sprite

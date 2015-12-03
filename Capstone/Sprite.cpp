@@ -37,6 +37,8 @@ void Sprite::load()
 		{
 			shouldSkip = true;
 			texture = loadedTextures[i].textureID;
+			imageWidth = loadedTextures[i].size.x;
+			imageHeight = loadedTextures[i].size.y;
 		}
 	}
 	if (!shouldSkip)
@@ -48,6 +50,7 @@ void Sprite::load()
 			Texture t;
 			t.path = spritePath;
 			t.textureID = NULL;
+			t.size = glm::vec2(0.0f, 0.0f);
 			loadedTextures.push_back(t);
 		}
 		else
@@ -68,6 +71,7 @@ void Sprite::generateTexture()
 	Texture t;
 	t.path = spritePath;
 	t.textureID = texture;
+	t.size = glm::vec2(imageWidth, imageHeight);
 	loadedTextures.push_back(t);
 }
 

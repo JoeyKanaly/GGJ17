@@ -2,10 +2,10 @@
 #define DRAWABLE_H
 
 #include <vector>
-#include "Sprite.h"
-#include "Tools.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include "Sprite.h"
+#include "Tools.h"
 
 class Drawable
 {
@@ -25,6 +25,7 @@ protected:
 	void initBuffers();
 private:
 	void getScaledSize();
+	void setVertexData();
 	GLuint VBO, VAO;
 	GLuint shader;
 	Sprite spr;

@@ -10,6 +10,29 @@ Drawable::Drawable()
 {
 	shader = loadShader("./shaders/textureDebug.vert.glsl","./shaders/textureDebug.frag.glsl");
 	spr = Sprite("./sprites/debug.png");
+	setVertexData();
+}
+
+void Drawable::setVertexData()
+{
+	glm::vec4 v(0.0f, 1.0f, 0.0f, 1.0f);
+	data.push_back(v);
+
+	v = glm::vec4(1.0f, 0.0f, 1.0f, 0.0f);
+	data.push_back(v);
+
+	v = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
+	data.push_back(v);
+
+	v = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
+	data.push_back(v);
+
+	v = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	data.push_back(v);
+
+	v = glm::vec4(1.0f, 0.0f, 1.0f, 0.0f);
+	data.push_back(v);
+	initBuffers();
 }
 
 void Drawable::initBuffers()
@@ -29,20 +52,32 @@ void Drawable::initBuffers()
 void Drawable::getScaledSize()
 {
 	float scalePercentage = 1.0f;
-	int tempWidth = spr.getWidth() , tempHeight = spr.getHeight();
+	int tempWidth = spr.getWidth(), tempHeight = spr.getHeight();
 	if (size.x == 0.0f && size.y > 0)// && size.y != tempHeight)
 	{
 		scalePercentage = size.y / tempHeight;
 		size.x = tempWidth * scalePercentage;
 	}
-	else if (size.y == 0.0f && size.x > 0)// && size.x != tempWidth)
+	else if (size.y == 0.0f && size.x > 0.0f)// && size.x != tempWidth)
 	{
 		scalePercentage = size.x / tempWidth;
 		size.y = tempHeight * scalePercentage;
 	}
-	else if (size.x <= 0 && size.y <= 0)
+	else if (size.x == 0.0f && size.y == 0.0f)
 	{
 		size.x = tempWidth;
+		size.y = tempHeight;
+	}
+	if (size.x == -1.0f)
+	{
+		size.x = -tempWidth;
+	}
+	if (size.y == -1.0f)
+	{
+		size.y = -tempHeight;
+	}
+	else if(size.y == 0)
+	{
 		size.y = tempHeight;
 	}
 }

@@ -168,3 +168,11 @@ std::string getFormattedTime()
 	std::string returnString = stringBuffer;
 	return returnString;
 }
+
+void handleFMODError(FMOD_RESULT result)
+{
+	if (result != FMOD_OK)
+	{
+		Log::instance()->writeToLog("Error with FMOD: " + static_cast<std::string>(FMOD_ErrorString(result)));
+	}
+}
