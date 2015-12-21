@@ -126,8 +126,10 @@
   <ItemGroup>
     <ClCompile Include="Background.cpp" />
     <ClCompile Include="BoxCollider.cpp" />
+    <ClCompile Include="Button.cpp" />
     <ClCompile Include="Drawable.cpp" />
     <ClCompile Include="Log.cpp" />
+    <ClCompile Include="Menu.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MyWindow.cpp" />
@@ -141,8 +143,10 @@
   <ItemGroup>
     <ClInclude Include="Background.h" />
     <ClInclude Include="BoxCollider.h" />
+    <ClInclude Include="Button.h" />
     <ClInclude Include="Drawable.h" />
     <ClInclude Include="Log.h" />
+    <ClInclude Include="Menu.h" />
     <ClInclude Include="MyWindow.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Sound.h" />

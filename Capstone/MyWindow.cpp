@@ -77,12 +77,18 @@ void MyWindow::addKeyCallbackFunction(std::function<void(int, int, int, int)> fu
 	keyCalls.push_back(func);
 }
 
+void MyWindow::addMouseButtonCallbackFunction(std::function<void(int, int, int, glm::vec2)> func)
+{
+	mouseButtonCalls.push_back(func);
+}
+
 void MyWindow::initWindow()
 {
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 	projection = glm::ortho(0.0f, (float)windowWidth, (float)windowHeight, 0.0f);
 
 	window = glfwCreateWindow(windowWidth, windowHeight, windowTitle.c_str(), nullptr, nullptr);
@@ -100,6 +106,7 @@ void MyWindow::initWindow()
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glfwSetKeyCallback(window, MyWindow::keyCallback);
 	glfwSetWindowSizeCallback(window, MyWindow::resizeCallback);
+	glfwSetMouseButtonCallback(window, mouseButtonCallback);
 	generateUBO();
 }
 
@@ -127,9 +134,25 @@ void MyWindow::keyCallback(GLFWwindow* window, int key, int scancode, int action
 	Instance()->keyCallbackImpl(key, scancode, action, modifiers);
 }
 
+void MyWindow::mouseButtonCallback(GLFWwindow * window, int button, int action, int mods)
+{
+	double x, y;
+	glfwGetCursorPos(window, &x, &y);
+	glm::vec2 mousePosition(x, y);
+	Instance()->mouseButtonCallbackImpl(button, action, mods, mousePosition);
+}
+
 void MyWindow::resizeCallback(GLFWwindow* window, int width, int height)
 {
 	Instance()->resizeCallbackImpl(width, height);
+}
+
+void MyWindow::mouseButtonCallbackImpl(int button, int action, int mods, glm::vec2 mousePosition)
+{
+	for (auto &fn : mouseButtonCalls)
+	{
+		fn(button, action, mods, mousePosition);
+	}
 }
 
 void MyWindow::keyCallbackImpl(int key, int scanCode, int action, int modifiers)
@@ -138,9 +161,10 @@ void MyWindow::keyCallbackImpl(int key, int scanCode, int action, int modifiers)
 	{
 		glfwSetWindowShouldClose(window, 1);
 	}
-	for (int i = 0; i < keyCalls.size(); i++)
+	
+	for (auto &fn : keyCalls)
 	{
-		keyCalls[i](key, scanCode, action, modifiers);
+		fn(key, scanCode, action, modifiers);
 	}
 }
 

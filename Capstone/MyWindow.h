@@ -22,7 +22,9 @@ public:
 	GLFWwindow* getWindow();
 	std::string getWindowTitle();
 	void addKeyCallbackFunction(std::function<void(int, int, int, int)> func);
+	void addMouseButtonCallbackFunction(std::function<void(int, int, int, glm::vec2)> func);
 	static void keyCallback(GLFWwindow * window, int key, int scancode, int action, int modifiers);
+	static void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
 	bool resized;
 private:
 	MyWindow();
@@ -35,10 +37,12 @@ private:
 	void keyCallbackImpl(int key, int scanCode, int action, int modifiers);
 	void resizeCallbackImpl(int width, int height);
 	static void resizeCallback(GLFWwindow* window, int width, int height);
+	void mouseButtonCallbackImpl(int button, int action, int mods, glm::vec2 mousePosition);
 	GLFWwindow* window;
 	int windowWidth, windowHeight;
 	std::string windowTitle;
 	std::vector<std::function<void(int, int, int, int)>> keyCalls;
+	std::vector<std::function<void(int, int, int, glm::vec2)>> mouseButtonCalls;
 	glm::mat4 projection;
 	GLuint UBO;
 	void generateUBO();

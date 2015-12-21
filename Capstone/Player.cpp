@@ -2,37 +2,50 @@
 #include "Player.h"
 #endif
 
+#include "MyWindow.h"
 #define GLEW_STATIC
 #include <GL\glew.h>
 #include <GLFW\glfw3.h>
 
 Player::Player() :
-	body(), lance(), xVel(0), yVel(0)
+	body(), lance(), xVelocity(0), yVelocity(0),
+	leftKey(GLFW_KEY_A), rightKey(GLFW_KEY_D),
+	upKey(GLFW_KEY_W), downKey(GLFW_KEY_S)
 {
 }
 
 void Player::keyCallback(int key, int scancode, int action, int modifiers)
 {
-	if (key == GLFW_KEY_RIGHT && (action == GLFW_REPEAT || action == GLFW_PRESS))
+	if (key == rightKey && (action == GLFW_REPEAT || action == GLFW_PRESS))
 	{
-		xVel = 0.3;
+		xAcceleration = 100;
 	}
-	else if (key == GLFW_KEY_LEFT && action == GLFW_REPEAT)
+	if (key == leftKey && (action == GLFW_REPEAT || action == GLFW_PRESS))
 	{
-		xVel = -0.3;
+		xAcceleration = -100;
 	}
-	else if (key == GLFW_KEY_RIGHT && action == GLFW_RELEASE)
+	if (key == upKey && (action == GLFW_REPEAT || action == GLFW_PRESS))
 	{
-		xVel = 0;
+		yAcceleration = -100;
+	}
+	if (key == downKey && (action == GLFW_REPEAT || action == GLFW_PRESS))
+	{
+		yAcceleration = 100;
+	}
+	if ((key == upKey || key == downKey) && action == GLFW_RELEASE)
+	{
+		yAcceleration = 0;
+	}
+	if ((key == leftKey || key == rightKey) && action == GLFW_RELEASE)
+	{
+		xAcceleration = 0;
 	}
 }
 
 void Player::draw()
 {
-	playerHealth.draw();
-	body.draw();
-	lance.draw();
 	Drawable::draw();
+	playerHealth.draw();
 }
 
 void Player::setCollisionPosition()
@@ -67,18 +80,77 @@ void Player::setPosition(glm::vec2 pos)
 	setCollisionPosition();
 }
 
+void Player::doPhysics(glm::vec2& pos, float dt)
+{
+	pos.x += (xVelocity * dt);
+	pos.y += (yVelocity * dt);
+	xVelocity += (xAcceleration * dt);
+	yVelocity += (yAcceleration * dt);
+}
+
 void Player::update(float t, float dt)
 {
 	glm::vec2 pos = this->getPosition();
-	pos.x += xVel;
+	/*
+	 * Acceleration = deltaVelocity/deltaTime
+	 * Acceleration * deltaTime = deltaVelocity
+	 *
+	 */
+
+	/*
+	pos.x += xVelocity;
 	if (pos.x < 0)
 	{
-		pos.x -= xVel;
+		pos.x -= xVelocity;
 	}
-	pos.y += yVel;
+	pos.y += yVelocity;
 	if (pos.y < 0)
 	{
-		pos.y -= yVel;
+		pos.y -= yVelocity;
+	}*/
+	if (this->getSize().x > 0)
+	{
+		if (pos.x >= 0 && pos.x + this->getSize().x <= MyWindow::Instance()->getWindowWidth())
+		{
+			doPhysics(pos, dt);
+		}
+		else if(pos.x < 0)
+		{
+			pos.x = 0;
+			xVelocity = 0;
+		}
+		else
+		{
+			pos.x = MyWindow::Instance()->getWindowWidth() - this->getSize().x;
+			xVelocity = 0;
+		}
+	}
+	else
+	{
+		if(pos.x >= abs(this->getSize().x) && pos.x <= MyWindow::Instance()->getWindowWidth())
+		{
+			doPhysics(pos, dt);
+		}
+		else if(pos.x <= abs(this->getSize().x))
+		{
+			pos.x = abs(this->getSize().x);
+			xVelocity = 0;
+		}
+		else
+		{
+			pos.x = MyWindow::Instance()->getWindowWidth();
+			xVelocity = 0;
+		}
+	}
+	if (pos.y < 0)
+	{
+		pos.y = 0;
+		yVelocity = 0;
+	}
+	else if (pos.y > MyWindow::Instance()->getWindowHeight() - this->getSize().y)
+	{
+		pos.y = MyWindow::Instance()->getWindowHeight() - this->getSize().y;
+		yVelocity = 0;
 	}
 	Drawable::setPosition(pos);
 	setCollisionPosition();
@@ -89,7 +161,30 @@ void Player::checkForPlayerCollision(Player& p2)
 	if (lance.collidesWithBox(&p2.lance))
 	{
 		std::cout << "colliding" << std::endl;
-		Drawable::setPosition(getPosition().x - 14, getPosition().y);
-		xVel = -.3;
+		//Drawable::setPosition(getPosition().x - 14, getPosition().y);
+		if (this->getSize().x < 0)
+			xVelocity = 1200;
+		else
+			xVelocity = -1200;
+		yVelocity = -100;
+	}
+}
+
+void Player::setButton(Buttons b, int key)
+{
+	switch (b)
+	{
+	case BUTTON_LEFT:
+		leftKey = key;
+		break;
+	case BUTTON_RIGHT:
+		rightKey = key;
+		break;
+	case BUTTON_UP:
+		upKey = key;
+		break;
+	case BUTTON_DOWN:
+		downKey = key;
+		break;
 	}
 }

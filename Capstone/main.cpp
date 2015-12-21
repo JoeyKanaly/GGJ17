@@ -9,17 +9,25 @@
 #include "Tools.h"
 #include "SoundManager.h"
 #include "BoxCollider.h"
+#include "Menu.h"
+
+enum gameState
+{
+	MAINMENU,
+	PLAY,
+	GAMESTATECOUNT
+};
 
 SoundManager soundManager;
 
 void keyHandler(int key, int scancode, int action, int modifiers);
-void mouse(GLFWwindow* window, int button, int action, int mods);
 void initPlayers(Player* p1, Player* p2, MyWindow* window);
 
 int main()
 {
 	double t = 0.0;
 	double dt = 1 / 60.0;
+	gameState currentState = MAINMENU;
 
 	MyWindow* window = MyWindow::Instance();
 	window->setWindowSize(1366, 768);
@@ -31,20 +39,30 @@ int main()
 	Background back("./sprites/backgrounds/back_cave.png");
 	back.setSize(window->getWindowWidth(), window->getWindowHeight());
 
+	Menu mainMenu;
+	mainMenu.addButton("Play", window->getWindowWidth() / 2 - (100), window->getWindowHeight() / 2, 0, 0);
+	//mainMenu.addButton("Credits", window->getWindowWidth() / 2 - 100, window->getWindowHeight() / 2 + 100, 0, 0);
+	mainMenu.back.setSpritePath("./sprites/backgrounds/mainMenu.png");
+	mainMenu.setButtonSprite("Play", "./sprites/buttons/playUp.png");
+	//mainMenu.setButtonSprite("Credits", "./sprites/buttons/creditsUp.png");
+	mainMenu.setButtonClickFunction("Play", [&]() {currentState = PLAY; });
 	Player p1, p2;
 	initPlayers(&p1, &p2, window);
 
 	window->addKeyCallbackFunction([&](int a, int b, int c, int d) {
 		p1.keyCallback(a, b, c, d); 
 		p2.keyCallback(a, b, c, d);
-		keyHandler(a, b, c, d); 
+		keyHandler(a, b, c, d);
+	});
+	window->addMouseButtonCallbackFunction([&](int a, int b, int c, glm::vec2 d) {
+		mainMenu.mouseButton(a, b, c, d);
 	});
 	double currentTime = glfwGetTime();
 	double newTime, frameTime;
 
 	//soundManager.playSound("backgroundMusic");
 
-	glfwSetMouseButtonCallback(window->getWindow(), mouse);
+	
 
 	while (!glfwWindowShouldClose(window->getWindow()))
 	{
@@ -56,19 +74,31 @@ int main()
 
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
-		back.draw();
-		p1.draw();
-		p2.draw();
-		//printf("(%f, %f) (%f, %f)\n",p2.body.topLeft.x, p2.body.topLeft.y, p2.body.bottomRight.x, p2.body.bottomRight.y);
-		while (frameTime > 0.0)
+
+		switch (currentState)
 		{
-			float deltaTime = std::min(frameTime, dt);
-			p1.update(t, deltaTime);
-			frameTime -= deltaTime;
-			t += deltaTime;
+		case MAINMENU:
+			mainMenu.draw();
+			glfwSetInputMode(window->getWindow(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+			break;
+		case PLAY:
+			glfwSetInputMode(window->getWindow(), GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+			back.draw();
+			p1.draw();
+			p2.draw();
+			while (frameTime > 0.0)
+			{
+				float deltaTime = std::min(frameTime, dt);
+				p1.update(t, deltaTime);
+				p2.update(t, deltaTime);
+				frameTime -= deltaTime;
+				t += deltaTime;
+			}
+			p1.checkForPlayerCollision(p2);
+			p2.checkForPlayerCollision(p1);
+			break;
 		}
 		soundManager.update();
-		p1.checkForPlayerCollision(p2);
 		glfwSwapBuffers(window->getWindow());
 	}
 
@@ -77,24 +107,13 @@ int main()
 
 void keyHandler(int key, int scancode, int action, int modifiers)
 {
-	if (key == GLFW_KEY_A && action == GLFW_RELEASE)
+	if (key == GLFW_KEY_Y && action == GLFW_RELEASE)
 	{
 		soundManager.playSound("randomEffect");
 	}
 	if (key == GLFW_KEY_LEFT_BRACKET)
 	{
 		soundManager.reduceVolume(soundType::BACKGROUND);
-	}
-}
-
-// TODO: Move this to MyWindow to have sperate mousecallback functions
-void mouse(GLFWwindow* window, int button, int action, int mods)
-{
-	double x, y;
-	glfwGetCursorPos(window, &x, &y);
-	if (button == GLFW_MOUSE_BUTTON_1 && action == GLFW_RELEASE)
-	{
-		printf("(%f, %f)\n", x, y);
 	}
 }
 
@@ -106,4 +125,9 @@ void initPlayers(Player* p1, Player* p2, MyWindow* window)
 	p2->setSize(-1, 0);
 	p2->setPosition(window->getWindowWidth() - p2->getSize().x, window->getWindowHeight() - 88);
 	p2->playerHealth.healthYOffset = window->getWindowWidth() - (32 * 3);
+
+	p2->setButton(BUTTON_RIGHT, GLFW_KEY_RIGHT);
+	p2->setButton(BUTTON_LEFT, GLFW_KEY_LEFT);
+	p2->setButton(BUTTON_UP, GLFW_KEY_UP);
+	p2->setButton(BUTTON_DOWN, GLFW_KEY_DOWN);
 }

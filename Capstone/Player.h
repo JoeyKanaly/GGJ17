@@ -6,6 +6,15 @@
 #include "Health.h"
 #include "BoxCollider.h"
 
+enum Buttons
+{
+	BUTTON_LEFT,
+	BUTTON_RIGHT,
+	BUTTON_UP,
+	BUTTON_DOWN,
+	numButtons
+};
+
 class Player : public Drawable
 {
 public:
@@ -18,10 +27,13 @@ public:
 	BoxCollider body, lance;
 	void update(float t, float dt);
 	void checkForPlayerCollision(Player& p2);
+	void setButton(Buttons b, int key);
 private:
 	void setCollisionPosition();
-	float xVel, yVel;
-
+	float xVelocity, yVelocity;
+	float xAcceleration, yAcceleration;
+	int leftKey, rightKey, upKey, downKey;
+	void doPhysics(glm::vec2& pos, float dt);
 };
 
 #endif
