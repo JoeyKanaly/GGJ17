@@ -2,6 +2,7 @@
 #include "Menu.h"
 #endif // !MENU_H
 
+#include "GLFW\glfw3.h"
 #include "MyWindow.h"
 
 Menu::Menu()
@@ -59,11 +60,14 @@ void Menu::draw()
 
 void Menu::mouseButton(int button, int action, int mods, glm::vec2 mousePosition)
 {
-	for (auto &ent1 : buttons)
+	if (shouldCheckForMouse && action == GLFW_RELEASE)
 	{
-		if (ent1.second.collidesWithMouse(mousePosition))
+		for (auto &ent1 : buttons)
 		{
-			ent1.second.buttonFunction();
+			if (ent1.second.collidesWithMouse(mousePosition))
+			{
+				ent1.second.buttonFunction();
+			}
 		}
 	}
 }

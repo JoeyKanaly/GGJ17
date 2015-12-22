@@ -20,6 +20,7 @@ public:
 	void mouseButton(int button, int action, int mods, glm::vec2 mousePosition);
 	void setButtonClickFunction(std::string buttonName, std::function<void()> func);
 	Background back;
+	bool shouldCheckForMouse;
 
 private:
 	std::map<std::string, Button> buttons;

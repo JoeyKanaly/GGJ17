@@ -20,6 +20,10 @@ public:
 	void setSize(glm::vec2 s);
 	void setSize(int width, int height);
 	glm::vec2 getSize();
+	float rotationAngle;
+	glm::mat4 model;
+	glm::vec2 center;
+	glm::vec2 origin;
 protected:
 	std::vector<glm::vec4> data;
 	void initBuffers();

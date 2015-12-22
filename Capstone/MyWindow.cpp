@@ -138,6 +138,7 @@ void MyWindow::mouseButtonCallback(GLFWwindow * window, int button, int action, 
 {
 	double x, y;
 	glfwGetCursorPos(window, &x, &y);
+	//std::cout << x << ", " << y << std::endl;
 	glm::vec2 mousePosition(x, y);
 	Instance()->mouseButtonCallbackImpl(button, action, mods, mousePosition);
 }

@@ -9,6 +9,7 @@ class Health : public Drawable
 public:
 	Health();
 	void reduceHealth(int reduceAmount);
+	void reset();
 	int getCurrentHealth();
 	void setMaxHealth(int max);
 	int getMaxHealth();

@@ -29,6 +29,11 @@ void Health::reduceHealth(int reduceAmount)
 	currentHealth = std::max(currentHealth - reduceAmount, 0);
 }
 
+void Health::reset()
+{
+	currentHealth = maxHealth;
+}
+
 int Health::getCurrentHealth()
 {
 	return currentHealth;

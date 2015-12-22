@@ -11,6 +11,7 @@ public:
 	Sound() {};
 	Sound(std::string path, FMOD::System* system);
 	void playSound(FMOD::System* system);
+	void stopSound(FMOD::System * system);
 	void setGroup(FMOD::ChannelGroup* group);
 	void setShouldRepeat(bool value);
 private:

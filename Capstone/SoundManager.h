@@ -19,6 +19,9 @@ public:
 	void addSound(std::string soundName, std::string path, soundType typeOfSound);
 	void playSound(std::string soundName);
 	void reduceVolume(soundType sT);
+	void increaseVolume(soundType sT);
+	void setVolume(soundType sT, float vol);
+	void stopSound(std::string soundName);
 	void update();
 private:
 	FMOD::System* system;

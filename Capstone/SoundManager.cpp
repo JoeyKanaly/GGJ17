@@ -35,11 +35,45 @@ void SoundManager::reduceVolume(soundType sT)
 	{
 	case soundType::BACKGROUND:
 		music->getVolume(&currentVolume);
-		music->setVolume(std::max(currentVolume - 0.1f, 0.0f));
+		music->setVolume(std::max(currentVolume - 0.05f, 0.0f));
 		break;
 	case soundType::SOUNDEFFECT:
 		soundEffects->getVolume(&currentVolume);
 		soundEffects->setVolume(std::max(currentVolume - 0.1f, 0.0f));
+		break;
+	}
+}
+
+void SoundManager::setVolume(soundType sT, float vol)
+{
+	switch (sT)
+	{
+	case soundType::BACKGROUND:
+		music->setVolume(vol);
+		break;
+	case soundType::SOUNDEFFECT:
+		soundEffects->setVolume(vol);
+		break;
+	}
+}
+
+void SoundManager::stopSound(std::string soundName)
+{
+	sounds[soundName].stopSound(system);
+}
+
+void SoundManager::increaseVolume(soundType sT)
+{
+	float currentVolume;
+	switch (sT)
+	{
+	case soundType::BACKGROUND:
+		music->getVolume(&currentVolume);
+		music->setVolume(std::max(currentVolume + 0.1f, 0.0f));
+		break;
+	case soundType::SOUNDEFFECT:
+		soundEffects->getVolume(&currentVolume);
+		soundEffects->setVolume(std::max(currentVolume + 0.1f, 0.0f));
 		break;
 	}
 }

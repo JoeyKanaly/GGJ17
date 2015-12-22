@@ -5,7 +5,7 @@
 #include "Drawable.h"
 #include "Health.h"
 #include "BoxCollider.h"
-
+#include "SoundManager.h"
 enum Buttons
 {
 	BUTTON_LEFT,
@@ -28,12 +28,15 @@ public:
 	void update(float t, float dt);
 	void checkForPlayerCollision(Player& p2);
 	void setButton(Buttons b, int key);
+	SoundManager* sm;
 private:
 	void setCollisionPosition();
-	float xVelocity, yVelocity;
-	float xAcceleration, yAcceleration;
+	float acceleration, rotationAcceleration;
 	int leftKey, rightKey, upKey, downKey;
 	void doPhysics(glm::vec2& pos, float dt);
+	float lastHit;
+	float speed, rotationSpeed;
+
 };
 
 #endif

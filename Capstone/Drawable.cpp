@@ -10,7 +10,9 @@ Drawable::Drawable()
 {
 	shader = loadShader("./shaders/textureDebug.vert.glsl","./shaders/textureDebug.frag.glsl");
 	spr = Sprite("./sprites/debug.png");
+	rotationAngle = 0.0f;
 	setVertexData();
+	center = glm::vec2();
 }
 
 void Drawable::setVertexData()
@@ -88,10 +90,20 @@ void Drawable::draw()
 	glBindVertexArray(VAO);
 	GLuint shaderModelMat = glGetUniformLocation(shader, "model");
 	GLuint uboIndex = glGetUniformBlockIndex(shader, "mats");
-	glm::mat4 model = glm::mat4();
+	model = glm::mat4();
+	getScaledSize();
+
+	if (center.x == 0 && center.y == 0)
+	{
+		center = glm::vec2(size.x / 2.0f, size.y / 2.0f);
+	}
 
 	model = glm::translate(model, glm::vec3(position, 0.0f));
-	getScaledSize();
+	model = glm::translate(model, glm::vec3(center, 0.0f));
+	model = glm::translate(model, glm::vec3(origin, 0.0f));
+	model = glm::rotate(model, glm::radians(rotationAngle), glm::vec3(0.0f, 0.0f, 1.0f));
+	model = glm::translate(model, glm::vec3(-origin, 0.0f));
+	model = glm::translate(model, glm::vec3(-center, 0.0f));
 	model = glm::scale(model, glm::vec3(size, 1.0f));
 	glUniformMatrix4fv(shaderModelMat, 1, GL_FALSE, glm::value_ptr(model));
 	glUniformBlockBinding(shader, uboIndex, 0);
