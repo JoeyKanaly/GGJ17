@@ -1,0 +1,6 @@
+12-22-15 10-17-20 : Error with FMOD: File not found.
+12-22-15 10-17-20 : Error with FMOD: File not found.
+12-22-15 10-17-20 : Unable to load image at: "./sprites/backgrounds/back_cave.png"
+12-22-15 10-17-20 : Unable to load image at: "./sprites/backgrounds/mainMenu.png"
+12-22-15 10-17-20 : Unable to load image at: "./sprites/buttons/playUp.png"
+12-22-15 10-17-20 : Unable to load image at: "./sprites/buttons/restartUp.png"

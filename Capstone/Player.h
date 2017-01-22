@@ -3,7 +3,6 @@
 #include <iostream>
 #include "Sprite.h"
 #include "Drawable.h"
-#include "Health.h"
 #include "BoxCollider.h"
 #include "SoundManager.h"
 enum Buttons
@@ -23,20 +22,16 @@ public:
 	void draw();
 	void setPosition(int x, int y);
 	void setPosition(glm::vec2 pos);
-	Health playerHealth;
-	BoxCollider body, lance;
-	void update(float t, float dt);
-	void checkForPlayerCollision(Player& p2);
+	void update();
 	void setButton(Buttons b, int key);
 	SoundManager* sm;
 private:
-	void setCollisionPosition();
 	float acceleration, rotationAcceleration;
 	int leftKey, rightKey, upKey, downKey;
 	void doPhysics(glm::vec2& pos, float dt);
 	float lastHit;
 	float speed, rotationSpeed;
-
+	bool pressed[numButtons];
 };
 
 #endif

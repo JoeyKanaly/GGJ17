@@ -1,0 +1,20 @@
+
+//== PROGRAM LINK STATUS = FALSE
+//== PROGRAM VALIDATE STATUS = FALSE
+/*== INFO LOG ==
+Vertex info
+-----------
+(0) : error C5145: must write to gl_Position
+  == INFO LOG END ==*/
+
+//======================================================
+//   Vertex Shader 2 
+//======================================================
+
+//== SHADER COMPILE STATUS = TRUE
+
+//======================================================
+//   Fragment Shader 3
+//======================================================
+
+//== SHADER COMPILE STATUS = TRUE
